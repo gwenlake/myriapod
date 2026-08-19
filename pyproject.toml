@@ -9,7 +9,6 @@ license-files = ["LICENSE", "NOTICE"]
 authors = [{ name = "Gwenlake", email = "info@gwenlake.com" }]
 keywords = ["agents", "swarm", "llm", "orchestration", "planner", "workers"]
 classifiers = [
-    "Private :: Do Not Upload",
     "Development Status :: 3 - Alpha",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",

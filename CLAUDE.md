@@ -12,40 +12,26 @@ framework-free; adapters bind it to a runtime (Pydantic AI by default).
 ## Commands
 
 ```bash
-./scripts/sync.sh                         # install (see the iCloud note)
-uv run pytest                             # 109 tests, all offline, no API keys
+uv sync --all-extras                      # install (see the note below)
+uv run python -m pytest                   # 109 tests, all offline, no API keys
 uv run myriapod bench -n 1000 -c 500      # scheduler benchmark, offline, free
 uv run myriapod bench -n 40 --waves 3 --groups 4 --planner-delay 2 --viz
 uv run myriapod ask "..."                 # real run (Opus 5 + Haiku 4.5, $1.5 cap)
 ```
 
+Two things that look like bugs and are not:
+
+- **`uv sync --all-extras`, not a bare `uv sync`.** A bare sync (or a bare
+  `uv run`) can prune the optional extras, which surfaces later as
+  `No module named 'fpdf'` in the report tests — a failure that names a
+  dependency rather than the sync that dropped it.
+- **`uv run python -m pytest`, not `uv run pytest`.** The dev group installs
+  the pytest *module* but no console script in this environment, so the bare
+  form dies on `Failed to spawn: pytest`.
+
 Prefer `bench` over `ask` when validating scheduler or viz changes: it drives
 the whole machine with simulated agents, so it costs nothing and is
 deterministic enough to compare runs.
-
-## macOS + iCloud gotcha (this will bite you)
-
-`~/Documents` is iCloud-synced on this machine. `uv` marks `.venv` hidden
-(`UF_HIDDEN`), iCloud propagates that flag to every file created inside it,
-and this Python build **skips hidden `.pth` files** — so the editable install
-silently stops working:
-
-```
-ModuleNotFoundError: No module named 'myriapod'
-```
-
-Fix: **`./scripts/sync.sh`** — it syncs, clears the flag, and then checks
-that `import myriapod` actually resolves rather than assuming it. Use it
-instead of a bare `uv sync`; the flag comes back after every re-sync. (A
-bare `uv run` can also prune the optional extras, which surfaces as
-`No module named 'fpdf'` in the report tests — the script passes
-`--all-extras` for that reason.)
-
-The durable fix is to keep the venv out of the synced tree: move the project
-out of `~/Documents`, or set `UV_PROJECT_ENVIRONMENT` **per project** via
-direnv. Do not export that variable globally — it is a single path, so every
-uv project would share one environment. Diagnose with
-`.venv/bin/python -v -c pass | grep pth`.
 
 ## Architecture invariants
 
