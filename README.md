@@ -397,3 +397,99 @@ src/myriapod/
 ```bash
 uv run python -m pytest   # 109 tests: tree, scheduler, CLI, reports — all offline
 ```
+
+
+---
+
+<details>
+<summary>Contributing</summary>
+
+### Development setup
+
+The project uses [uv](https://docs.astral.sh/uv/). Install it once, then:
+
+```bash
+git clone https://github.com/gwenlake/myriapod.git
+cd myriapod
+
+# myriapod + every extra (web, gwenflow, docs) + the dev group (pytest).
+# Pass --all-extras: a bare sync can prune them, and the report tests then
+# fail on a missing fpdf — an error that names the dependency rather than
+# the sync that dropped it.
+uv sync --all-extras
+```
+
+Verify the editable install:
+
+```bash
+uv run myriapod version
+uv run python -c "import myriapod; print(myriapod.__file__)"
+```
+
+### Running tests
+
+The whole suite is offline: no API key, no network, no cost. Use
+`python -m pytest` — the dev group installs the module, not a console script,
+so a bare `uv run pytest` dies on `Failed to spawn: pytest`.
+
+```bash
+uv run python -m pytest -q                      # the full suite
+uv run python -m pytest tests/test_task_tree.py -q
+uv run python -m pytest -q -k "budget"          # filter by name
+```
+
+Write tests against the doubles in `myriapod.testing` — `ScriptedPlanner`,
+`SimWorker`, `SimReviewer` — rather than mocking an adapter. They drive the
+real scheduler, which is what you actually want under test.
+
+One trap worth naming: a test that asserts an ordering which id-sorting would
+produce anyway proves nothing. Two critical-path tests were written that way
+first. Put the head of the chain at a *later* id than the independent tasks.
+
+### Trying a change without spending anything
+
+`bench` runs the whole machine — scheduler, tree, planner turns, the live
+graph — on simulated agents. Prefer it to `ask` for any scheduler or viz work:
+it is free, it is deterministic enough to compare two runs, and it reaches
+scales an API budget will not.
+
+```bash
+uv run myriapod bench -n 1000 -c 500                     # throughput
+uv run myriapod bench -n 40 --waves 3 --groups 4 \
+    --planner-delay 2 --delay 1 -c 8 --viz               # what a run looks like
+```
+
+### What to contribute
+
+**A runtime adapter** is the most useful contribution. `src/myriapod/adapters/`
+holds two, each under a hundred lines: implement `AgentLike` (an async
+`run(message, context) -> RunOutcome`) and a `build_swarm` that hands two
+factories to `Swarm`.
+
+**A report format.** Worker output is parsed once into a block model
+(`parse_markdown` → `Block`/`Span`); add a renderer against that model and
+register it in `_WRITERS`. Handle `Block.rows` — pipe tables used to fall
+through to a paragraph and reach the PDF as a line of pipes.
+
+**Prompt work.** `PLANNER_SYSTEM_PROMPT` and `WORKER_INSTRUCTIONS` drive
+output depth far more than any scheduler knob. Override them per swarm
+(`build_swarm(planner_system_prompt=...)`) to experiment; a PR that changes
+the defaults should say what it was compared against.
+
+**Bugs** — open an issue with the goal, the flags, and the saved tree
+(`--save-tree`), which carries the whole run.
+
+Read [`CLAUDE.md`](CLAUDE.md) first. It documents the invariants a change must
+not break — context isolation, the incremental settled-counters, the
+concurrent planner turn — and why each one is load-bearing.
+
+### Git workflow
+
+- Branch off `main`; open a PR against it.
+- Commit subjects are imperative and describe the change, not the file
+  (`Drop the scripts, and the classifier that blocked publishing`). Put the
+  *why* in the body — that is what the next reader needs.
+- Run `uv run python -m pytest -q` before opening the PR, and say in the
+  description what you ran beyond it.
+
+</details>
