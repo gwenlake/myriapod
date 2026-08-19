@@ -1,7 +1,9 @@
 """myriapod — planner/worker agent swarms over a dynamic task tree.
 
 A frontier model plans; fleets of cheap models execute — in parallel,
-with strict context isolation. © 2026 Gwenlake.
+with strict context isolation.
+
+Copyright 2026 Gwenlake. Licensed under the Apache License, Version 2.0.
 """
 
 from myriapod.core.protocol import AgentLike, RunOutcome

@@ -403,10 +403,15 @@ uv run pytest            # 109 tests: tree, scheduler, CLI, reports — all offl
 Shared cross-run "field guide" memory · heterogeneous worker profiles chosen
 by the planner · OpenTelemetry spans · viz: per-node timelines.
 
+## License
+
+[Apache License 2.0](LICENSE) — © 2026 Gwenlake. Use it, modify it, ship it in
+a product; keep the notice and the attribution ([`NOTICE`](NOTICE)).
+
 ---
 
 <p align="center">
   <img src="assets/logo.svg" alt="" width="130"><br>
   Built by <a href="https://www.gwenlake.com">Gwenlake</a>.<br>
-  <sub>Proprietary — © 2026 Gwenlake. See <a href="LICENSE">LICENSE</a>.</sub>
+  <sub>Apache 2.0 — © 2026 Gwenlake.</sub>
 </p>

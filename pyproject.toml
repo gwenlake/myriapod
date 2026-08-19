@@ -4,7 +4,8 @@ version = "0.2.0"
 description = "Planner/worker agent swarm over a dynamic task tree: a frontier model plans, fleets of cheap models execute — in parallel, with strict context isolation."
 readme = "README.md"
 requires-python = ">=3.11"
-license = { file = "LICENSE" }
+license = "Apache-2.0"
+license-files = ["LICENSE", "NOTICE"]
 authors = [{ name = "Gwenlake", email = "info@gwenlake.com" }]
 keywords = ["agents", "swarm", "llm", "orchestration", "planner", "workers"]
 classifiers = [
