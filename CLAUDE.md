@@ -116,9 +116,9 @@ carry `turn` and `planner_turns`: without them a resumed run died on
 That is worth nothing unless the caller *persists* the tree, and the tree is
 the only place a run's full outputs exist — the viz wire carries summaries
 by design, so a process that exits without writing it has destroyed them.
-The local `internal-examples/gwenlake_roadmap.py` writes it in a `finally` and
-reads it back at startup. The run that motivated this stopped on `max_cost` with
-27 tasks done and no way to reach them.
+`examples/04_report_and_resume.py` writes it in a `finally` and reads it back
+at startup — copy that shape. The run that motivated this stopped on
+`max_cost` with 27 tasks done and no way to reach them.
 
 **Failed attempts are billed too** (`mark_failed` takes token counts). A
 worker that burns its whole output budget and returns no final text —
@@ -377,10 +377,13 @@ terminal — a spinner repainted into a log file is noise.
 
 ## Examples
 
-`examples/` is the public, self-contained set: two of them run offline (no
-key, no cost) and two make small real runs. They are part of what a reader
-sees first, so keep them short and keep them working. `internal-examples/`
-is Gwenlake-internal and gitignored — it has its own `CLAUDE.md`.
+`examples/` is self-contained and numbered: 01-02 run offline (no key, no
+cost), 03-06 make small real runs under a `max_cost` set in the file itself.
+This repository is public and they are the first thing a reader opens, so
+keep them short, keep them honest about what they spend, and keep them
+working. A separate `internal-examples/` exists on some checkouts — it is
+gitignored, carries Gwenlake-internal context, and has its own `CLAUDE.md`;
+nothing in `src/` may depend on it.
 
 ## Testing
 
