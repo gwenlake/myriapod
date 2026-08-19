@@ -1,0 +1,49 @@
+[project]
+name = "myriapod"
+version = "0.2.0"
+description = "Planner/worker agent swarm over a dynamic task tree: a frontier model plans, fleets of cheap models execute — in parallel, with strict context isolation."
+readme = "README.md"
+requires-python = ">=3.11"
+license = { file = "LICENSE" }
+authors = [{ name = "Gwenlake", email = "info@gwenlake.com" }]
+keywords = ["agents", "swarm", "llm", "orchestration", "planner", "workers"]
+classifiers = [
+    "Private :: Do Not Upload",
+    "Development Status :: 3 - Alpha",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+]
+dependencies = [
+    "typer>=0.12",
+    "rich>=13.7",
+    "pydantic-ai>=1.0",
+]
+
+[project.optional-dependencies]
+web = ["ddgs>=9.0"]
+gwenflow = ["gwenflow>=1.1"]
+docs = [
+    "fpdf2>=2.8",
+    "python-pptx>=1.0",
+]
+
+[project.scripts]
+myriapod = "myriapod.cli:app"
+
+[dependency-groups]
+dev = ["pytest>=8.0", "pytest-asyncio>=0.24"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/myriapod"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+
+[tool.uv]
+package = true

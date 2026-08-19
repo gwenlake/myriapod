@@ -1,0 +1,26 @@
+__pycache__/
+*.py[cod]
+.venv/
+dist/
+build/
+*.egg-info/
+.pytest_cache/
+.env
+runs/
+.claude/settings.local.json
+
+.DS_Store
+
+
+# état de run des exemples (contient les sorties complètes des workers)
+*.tree.json
+
+# atelier des exemples internes : dépôts générés avant publication
+internal-examples/labs_workspace/
+
+# exemples internes Gwenlake (roadmap, labs, atelier) : non publiés
+internal-examples/
+tests/test_labs_workshop.py
+
+# sorties des exemples
+examples/out/
